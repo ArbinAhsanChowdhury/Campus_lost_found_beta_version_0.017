@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found - Cloud Sync</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-cloud"></i> Campus Lost & Found</h1>
+            <p class="subtitle">Cloud-synced across all devices</p>
+            
+            <div class="sync-status" id="syncStatus">
+                <i class="fas fa-sync-alt spin"></i>
+                <span>Syncing with cloud...</span>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h3 id="lostCount">0</h3>
+                    <p>Lost Items</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hands-helping"></i>
+                <div>
+                    <h3 id="foundCount">0</h3>
+                    <p>Found Items</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-database"></i>
+                <div>
+                    <h3 id="totalCount">0</h3>
+                    <p>Total Items</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-cloud-download-alt"></i>
+                <div>
+                    <h3 id="lastSync">--:--</h3>
+                    <p>Last Sync</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="control-buttons">
+            <button class="btn btn-primary" onclick="showForm('lost')">
+                <i class="fas fa-exclamation-circle"></i> Report Lost
+            </button>
+            <button class="btn btn-secondary" onclick="showForm('found')">
+                <i class="fas fa-hand-holding-heart"></i> Report Found
+            </button>
+            <button class="btn btn-success" onclick="refreshData()">
+                <i class="fas fa-sync"></i> Refresh Data
+            </button>
+            <button class="btn btn-info" onclick="showCloudInfo()">
+                <i class="fas fa-info-circle"></i> Cloud Info
+            </button>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search items...">
+                <button onclick="searchItems()">Search</button>
+            </div>
+            <select id="filterType" onchange="filterItems()">
+                <option value="all">All Items</option>
+                <option value="lost">Lost Only</option>
+                <option value="found">Found Only</option>
+            </select>
+        </div>
+
+        <!-- Items List -->
+        <div class="items-container" id="itemsList">
+            <!-- Items will load here -->
+            <div class="empty-state">
+                <i class="fas fa-cloud-download-alt fa-3x"></i>
+                <h3>Loading data from cloud...</h3>
+                <p>Fetching items from shared database</p>
+            </div>
+        </div>
+
+        <!-- Form Modal -->
+        <div class="modal" id="formModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="formTitle">Report Item</h2>
+                    <button class="close-btn" onclick="closeForm()">&times;</button>
+                </div>
+                
+                <form id="itemForm">
+                    <input type="hidden" id="itemType">
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Item Name *</label>
+                        <input type="text" id="itemName" required placeholder="e.g., Water Bottle, ID Card">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Location *</label>
+                            <select id="location" required>
+                                <option value="">Select Location</option>
+                                <option value="Library">Library</option>
+                                <option value="Cafeteria">Cafeteria</option>
+                                <option value="Lab Building">Lab Building</option>
+                                <option value="Sports Complex">Sports Complex</option>
+                                <option value="Classroom">Classroom</option>
+                                <option value="Parking">Parking</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Date *</label>
+                            <input type="date" id="date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description *</label>
+                        <textarea id="description" rows="3" required 
+                                  placeholder="Describe the item (color, brand, features)"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Your Name *</label>
+                            <input type="text" id="reporterName" required placeholder="Your name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Contact *</label>
+                            <input type="text" id="contact" required placeholder="Phone or email">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeForm()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cloud-upload-alt"></i> Save to Cloud
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cloud Info Modal -->
+        <div class="modal" id="infoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-cloud"></i> How Cloud Sync Works</h2>
+                    <button class="close-btn" onclick="closeInfo()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="info-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h4>Data Storage</h4>
+                            <p>All items are saved to a shared text file on GitHub</p>
+                            <code>https://gist.githubusercontent.com/.../lost_found_data.txt</code>
+                        </div>
+                    </div>
+                    
+                    <div class="info-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h4>Real-time Sync</h4>
+                            <p>Any device can add items, and all devices see updates instantly</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h4>No Login Required</h4>
+                            <p>Works on any device with internet - no account needed!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="current-data">
+                        <h4><i class="fas fa-database"></i> Current Cloud Status</h4>
+                        <p>File URL: <span id="fileUrl">Loading...</span></p>
+                        <p>Last Updated: <span id="cloudTimestamp">Loading...</span></p>
+                        <p>Total Items in Cloud: <span id="cloudItemCount">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p><i class="fas fa-code"></i> CSE 1110-1116 Hackathon Project | Cloud Sync Version</p>
+            <p class="tech-info">
+                <i class="fas fa-cogs"></i> 
+                Tech: HTML, CSS, JavaScript, GitHub Gists API
+            </p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
