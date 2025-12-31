@@ -5,7 +5,7 @@
 // GitHub Gist Configuration
 const GIST_ID = 'YOUR_GIST_ID_HERE'; // You'll create this
 const GIST_FILENAME = 'lost_found_data.txt';
-const GIST_TOKEN = ''; // Leave empty for public access
+const GIST_TOKEN = 'https://gist.github.com/ArbinAhsanChowdhury/f870f44f6939f7b2b62c712dcb0e8715'; // Leave empty for public access
 
 // Fallback: If GitHub fails, use localStorage
 const LOCAL_STORAGE_KEY = 'campus_lost_found_backup';
@@ -512,4 +512,5 @@ window.searchItems = searchItems;
 window.filterItems = filterItems;
 window.refreshData = refreshData;
 window.showCloudInfo = showCloudInfo;
+
 window.closeInfo = closeInfo;
